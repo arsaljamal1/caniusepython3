@@ -86,5 +86,51 @@ def supports_py3(project_name, index_url=PYPI_INDEX_URL):
                         project_name, request.status_code))
         return True
     response = request.json()
+    
+    resp = response["info"]["classifiers"]
+    isp2= False
+    ispy3=False
+    python3_versions = ''
+    for r in resp:
+        if str(r) == "Programming Language :: Python :: 2":
+            isp2=True
+        elif str(r) == "Programming Language :: Python :: 3":
+            ispy3=True
+        elif str(r) == "Programming Language :: Python :: 3.8":
+            python3_versions = python3_versions + " 3.8 "
+        elif str(r) == "Programming Language :: Python :: 3.7":
+            python3_versions = python3_versions + " 3.7 "
+        elif str(r) == "Programming Language :: Python :: 3.6":
+            python3_versions = python3_versions + " 3.6 "
+        elif str(r) == "Programming Language :: Python :: 3.5":
+            python3_versions = python3_versions + " 3.5 "
+        elif str(r) == "Programming Language :: Python :: 3.4":
+            python3_versions = python3_versions + " 3.4 "
+        elif str(r) == "Programming Language :: Python :: 3.3":
+            python3_versions = python3_versions + " 3.3 "
+        elif str(r) == "Programming Language :: Python :: 3.2":
+            python3_versions = python3_versions + " 3.2 "
+        elif str(r) == "Programming Language :: Python :: 3.1":
+            python3_versions = python3_versions + " 3.1 "
+        elif str(r) == "Programming Language :: Python :: 3.0":
+            python3_versions = python3_versions + " 3.0 "
+
+    version = None
+    version = str(response["info"]["name"]) + ": Supports version "
+    if isp2 and ispy3:
+        version = version + "python2, python3"
+        if python3_versions is not '':
+            version = version + ", " +python3_versions
+    elif ispy3 and not isp2:
+        version = version + "python3"
+        if python3_versions is not '':
+            version = version + ", " +python3_versions
+    elif isp2 and not ispy3:
+        version = version + "python2"
+    else:
+        version = version + ", could not find!"
+
+    print(version)
+    
     return any(c.startswith("Programming Language :: Python :: 3")
                for c in response["info"]["classifiers"])
